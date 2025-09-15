@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dance Music Store</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+  color: #fff;
+}
+#header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  background: linear-gradient(90deg,#1e40af,#2563eb);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  border-bottom: 2px solid #facc15;
+}
+#mainHeading {
+  font-size: 2.2rem;
+  margin: 0;
+  color: #facc15;
+  text-shadow: 0 0 10px rgba(250,204,21,0.8);
+}
+#subHeading {
+  font-size: 1.3rem;
+  margin: 5px 0 0 0;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+#albums-container { padding: 20px; }
+.style-block {
+  background-color: rgba(31,41,55,0.85);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+.style-block h2 { margin-top: 0; }
+.albums-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+.album-block {
+  flex: 0 0 18%; /* about 5 per row */
+  background-color: rgba(17,24,39,0.85);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  box-sizing: border-box;
+}
+.buy-button {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #10b981;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.buy-button:hover { background-color: #059669; }
+#adminButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #1e40af;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1500;
+}
+#adminButton:hover { background-color: #2563eb; }
+#adminPanel {
+  display: none;
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: rgba(31,41,55,0.95);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+  z-index: 2000;
+}
+.admin-section {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 15px;
+}
+input, select, button {
+  display: block;
+  margin: 5px 0 10px 0;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}
+button {
+  cursor: pointer;
+  background-color: #f59e0b;
+  color: #111;
+  font-weight: bold;
+}
+button:hover { background-color: #d97706; }
+.play-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  margin-right: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.track-row {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+.stripe-input {
+  display:none;
+  margin-top:6px;
+  padding:5px;
+  font-size:0.85rem;
+  width:95%;
+}
+@media(max-width:900px){
+  .album-block { flex: 0 0 30%; }
+}
+@media(max-width:600px){
+  #mainHeading{font-size:1.6rem}
+  #subHeading{font-size:1rem}
+  .album-block { flex: 0 0 48%; }
+  .buy-button{padding:6px 8px}
+  input,select,button{font-size:0.9rem}
+  #adminPanel{width:90%;right:5%}
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1 id="mainHeading">Dance Music Store</h1>
+  <h2 id="subHeading">Pay What You Want £2 or Over</h2>
+</div>
+
+<div id="albums-container"></div>
+
+<button id="adminButton">Admin Panel</button>
+
+<div id="adminPanel">
+  <h2>Admin Login</h2>
+  <input type="password" id="adminPass" placeholder="Enter password">
+  <button id="loginBtn">Login</button>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+
+  <div id="adminContent" style="display:none;">
+    <div class="admin-section">
+      <h3>Manage Styles</h3>
+      <input type="text" id="newStyleName" placeholder="New Style Name">
+      <button id="addStyleBtn">Add Style</button>
+      <select id="deleteStyleSelect"></select>
+      <button id="deleteStyleBtn">Delete Style</button>
+    </div>
+
+    <div class="admin-section">
+      <h3>Upload Album (10 tracks max)</h3>
+      <select id="albumStyleSelect"><option value="">Select Style</option></select>
+      <input type="file" id="tracks" multiple accept=".mp3">
+      <button id="uploadBtn">Upload Album</button>
+    </div>
+
+    <div class="admin-section">
+      <h3>Delete Last Album</h3>
+      <select id="deleteAlbumStyleSelect"><option value="">Select Style</option></select>
+      <button id="deleteAlbumBtn">Delete Last Album</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const adminPassword="Ajg1966";
+  const adminButton=document.getElementById('adminButton');
+  const adminPanel=document.getElementById('adminPanel');
+  const loginBtn=document.getElementById('loginBtn');
+  const logoutBtn=document.getElementById('logoutBtn');
+  const adminContent=document.getElementById('adminContent');
+  const newStyleName=document.getElementById('newStyleName');
+  const addStyleBtn=document.getElementById('addStyleBtn');
+  const deleteStyleSelect=document.getElementById('deleteStyleSelect');
+  const deleteStyleBtn=document.getElementById('deleteStyleBtn');
+  const albumStyleSelect=document.getElementById('albumStyleSelect');
+  const deleteAlbumStyleSelect=document.getElementById('deleteAlbumStyleSelect');
+  const tracksInput=document.getElementById('tracks');
+  const uploadBtn=document.getElementById('uploadBtn');
+  const deleteAlbumBtn=document.getElementById('deleteAlbumBtn');
+  const albumsContainer=document.getElementById('albums-container');
+
+  let styles=[];
+  let isAdmin=false;
+
+  function renderAlbums(){
+    albumsContainer.innerHTML='';
+    styles.forEach(styleBlock=>{
+      const styleDiv=document.createElement('div');
+      styleDiv.className='style-block';
+      styleDiv.innerHTML=`<h2>${styleBlock.style}</h2>`;
+      
+      const albumsRow=document.createElement('div');
+      albumsRow.className='albums-row';
+
+      styleBlock.albums.forEach(album=>{
+        const albumDiv=document.createElement('div');
+        albumDiv.className='album-block';
+        
+        album.tracks.forEach((track,index)=>{
+          const trackRow=document.createElement('div');
+          trackRow.className='track-row';
+
+          const audio=new Audio(track);
+
+          const playBtn=document.createElement('button');
+          playBtn.className='play-btn';
+          playBtn.textContent='▶';
+          playBtn.addEventListener('click',()=>{ audio.play(); });
+
+          const stopBtn=document.createElement('button');
+          stopBtn.className='play-btn';
+          stopBtn.textContent='■';
+          stopBtn.addEventListener('click',()=>{ audio.pause(); audio.currentTime=0; });
+
+          const trackName=document.createElement('span');
+          trackName.textContent=`Track ${index+1}`;
+
+          trackRow.appendChild(playBtn);
+          trackRow.appendChild(stopBtn);
+          trackRow.appendChild(trackName);
+          albumDiv.appendChild(trackRow);
+        });
+
+        const buyButton=document.createElement('a');
+        buyButton.href=album.stripeLink || "#";
+        buyButton.target="_blank";
+        buyButton.textContent='Buy Now';
+        buyButton.className='buy-button';
+
+        // Stripe link input for admin
+        const stripeInput=document.createElement('input');
+        stripeInput.type='url';
+        stripeInput.className='stripe-input';
+        stripeInput.placeholder='Paste Stripe Link';
+        stripeInput.value=album.stripeLink||"";
+
+        buyButton.addEventListener('click',(e)=>{
+          if(isAdmin){
+            e.preventDefault();
+            stripeInput.style.display='block';
+            stripeInput.focus();
+          }
+        });
+
+        stripeInput.addEventListener('change',()=>{
+          album.stripeLink=stripeInput.value;
+          buyButton.href=album.stripeLink;
+        });
+
+        albumDiv.appendChild(buyButton);
+        albumDiv.appendChild(stripeInput);
+
+        albumsRow.appendChild(albumDiv);
+      });
+      styleDiv.appendChild(albumsRow);
+      albumsContainer.appendChild(styleDiv);
+    });
+    updateDropdowns();
+  }
+
+  function updateDropdowns(){
+    albumStyleSelect.innerHTML='<option value="">Select Style</option>';
+    deleteAlbumStyleSelect.innerHTML='<option value="">Select Style</option>';
+    deleteStyleSelect.innerHTML='';
+    styles.forEach(s=>{
+      albumStyleSelect.innerHTML+=`<option value="${s.style}">${s.style}</option>`;
+      deleteAlbumStyleSelect.innerHTML+=`<option value="${s.style}">${s.style}</option>`;
+      deleteStyleSelect.innerHTML+=`<option value="${s.style}">${s.style}</option>`;
+    });
+  }
+
+  adminButton.addEventListener('click',()=>{
+    adminPanel.style.display=(adminPanel.style.display==='block')?'none':'block';
+  });
+
+  loginBtn.addEventListener('click',()=>{
+    if(document.getElementById('adminPass').value===adminPassword){
+      isAdmin=true;
+      adminContent.style.display='block';
+      logoutBtn.style.display='block';
+      alert('Login successful!');
+    } else alert('Incorrect password!');
+  });
+
+  logoutBtn.addEventListener('click',()=>{
+    isAdmin=false;
+    adminContent.style.display='none';
+    logoutBtn.style.display='none';
+    document.getElementById('adminPass').value='';
+    alert('Logged out.');
+  });
+
+  addStyleBtn.addEventListener('click',()=>{
+    const name=newStyleName.value.trim();
+    if(!name) return alert('Enter style name');
+    if(styles.find(s=>s.style===name)) return alert('Style already exists');
+    styles.push({style:name,albums:[]});
+    newStyleName.value='';
+    renderAlbums();
+  });
+
+  deleteStyleBtn.addEventListener('click',()=>{
+    const style=deleteStyleSelect.value;
+    if(!style) return alert('Select style');
+    styles=styles.filter(s=>s.style!==style);
+    renderAlbums();
+  });
+
+  uploadBtn.addEventListener('click',()=>{
+    const styleName=albumStyleSelect.value;
+    const files=tracksInput.files;
+    if(!styleName || files.length===0) return alert('Select style and add tracks');
+    if(files.length>10) return alert('Max 10 tracks per album');
+    const album={tracks:[],stripeLink:""};
+    for(let i=0;i<files.length;i++){
+      album.tracks.push(URL.createObjectURL(files[i]));
+    }
+    const styleBlock=styles.find(s=>s.style===styleName);
+    if(styleBlock.albums.length>=10) return alert('Max 10 albums per style');
+    styleBlock.albums.push(album);
+    tracksInput.value='';
+    renderAlbums();
+  });
+
+  deleteAlbumBtn.addEventListener('click',()=>{
+    const styleName=deleteAlbumStyleSelect.value;
+    if(!styleName) return alert('Select style');
+    const styleBlock=styles.find(s=>s.style===styleName);
+    if(!styleBlock || styleBlock.albums.length===0) return alert('No albums to delete');
+    styleBlock.albums.pop();
+    renderAlbums();
+  });
+
+  renderAlbums();
+});
+</script>
+</body>
+</html>
